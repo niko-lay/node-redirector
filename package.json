@@ -11,5 +11,10 @@
     "url": "bitbucket.org:_niko_/node-redirector.git"
   },
   "author": "Niko",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^1.4.3",
+    "express": "^4.13.4",
+    "mag": "git+https://github.com/niko-lay/mag.git"
+  }
 }
