@@ -1,0 +1,15 @@
+{
+  "name": "node-redirector",
+  "version": "1.0.0",
+  "description": "Http redirector write on nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "bitbucket.org:_niko_/node-redirector.git"
+  },
+  "author": "Niko",
+  "license": "ISC"
+}
