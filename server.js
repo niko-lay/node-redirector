@@ -16,7 +16,7 @@ logger.e = logger.error;
 
 
 var appDir = path.dirname(require.main.filename);
-// should be done sync
+// should be done synchronously
 var configParams = JSON.parse(fs.readFileSync(appDir + '/data/config.json'));
 
 var watcher = chokidar.watch (appDir + '/data/config.json', {persistent: true});
@@ -84,8 +84,13 @@ var onReq = function(req, resp){
 
     var host = req.get('host').split(':')[0];
     var port = (!req.get('host').split(':')[1])?80:req.get('host').split(':')[1];
+    var remoteIp = req.connection.remoteAddress;
 
-    logger.i(`${req.connection.remoteAddress} | ${req.headers['user-agent']} | ${req.headers['accept-language']} | ${host} | ${pathname}`);
+    if (req.headers['x-real-ip']){
+        remoteIp = req.headers['x-real-ip'];
+    }
+    
+    logger.i(`${remoteIp} | ${req.headers['user-agent']} | ${req.headers['accept-language']} | ${host} | ${pathname}`);
 
     if (!configParams.hasOwnProperty(host)){
         return resp.status(400).send('Request is wrong');
