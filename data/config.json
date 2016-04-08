@@ -1,0 +1,16 @@
+{
+    "example.com" : {
+        "/r/1":{
+            "url": "http://example1.com/some/path",
+            "persistent": true
+        },
+        "/r/2":{
+            "url": "http://example2.com/some/path",
+            "persistent": false
+        },
+        "default":{
+          "url": "http://example3.com/some/path",
+          "persistent": true
+        }
+    }
+}
