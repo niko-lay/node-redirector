@@ -7,6 +7,7 @@ var url = require('url');
 var path = require('path');
 var chokidar = require('chokidar');
 
+// http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
 const MMDBReader = require('mmdb-reader');
 var maxMindReader;
 var isMaxMindInit = false;
@@ -95,10 +96,22 @@ var onReq = function(req, resp){
         if (!ipData){
             geo = "No data for this IP";
         }else{
-            geo = ipData;
+            var geoObj = Object.create(null);
+            if (ipData.hasOwnProperty('location')){
+                geoObj.lat = ipData.location.latitude;
+                geoObj.lon = ipData.location.longitude;
+            }
+            if(ipData.hasOwnProperty('country')){
+                geoObj.country = ipData.country.names.en;
+                geoObj.country_code = ipData.country.iso_code;
+            }
+            if (ipData.hasOwnProperty('city')){
+                geoObj.city = ipData.city.names.en;
+            }
+            geo = JSON.stringify(geoObj);
         }
     }else{
-        geo = 'not init yet';
+        geo = 'Not init yet';
     }
 
    logger.i(`|${remoteIp}|${geo}|${req.headers['user-agent']}|${req.headers['accept-language']}|${host}|${pathname}`);
