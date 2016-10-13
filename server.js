@@ -7,12 +7,11 @@ var url = require('url');
 var path = require('path');
 var chokidar = require('chokidar');
 
-var logger = require('mag')(conf.appName);
-logger.d = logger.debug;
-logger.i = logger.info;
-logger.w = logger.warn;
-logger.e = logger.error;
+const MMDBReader = require('mmdb-reader');
+var maxMindReader;
+var isMaxMindInit = false;
 
+var logger = require('mag')(conf.appName);
 
 
 var appDir = path.dirname(require.main.filename);
@@ -89,8 +88,20 @@ var onReq = function(req, resp){
     if (req.headers['x-real-ip']){
         remoteIp = req.headers['x-real-ip'];
     }
-    
-    logger.i(`${remoteIp} | ${req.headers['user-agent']} | ${req.headers['accept-language']} | ${host} | ${pathname}`);
+
+    var geo;
+    if (isMaxMindInit){
+        var ipData = maxMindReader.lookup(remoteIp);
+        if (!ipData){
+            geo = "No data for this IP";
+        }else{
+            geo = ipData;
+        }
+    }else{
+        geo = 'not init yet';
+    }
+
+   logger.i(`|${remoteIp}|${geo}|${req.headers['user-agent']}|${req.headers['accept-language']}|${host}|${pathname}`);
 
     if (!configParams.hasOwnProperty(host)){
         return resp.status(400).send('Request is wrong');
@@ -114,6 +125,14 @@ app.on ('error', (err) => {
     logger.warn(err);
 });
 
+try {
+    maxMindReader = new MMDBReader(appDir + '/data/GeoLite2-City.mmdb');
+    isMaxMindInit = true;
+
+    logger.i('maxMindReader initialisation complete');
+}catch(err){
+    logger.warning("Maxmind initialisation failed. Reason: " + err.message);
+}
 
 var server = app.listen(conf.listenPort, conf.listenIP, function () {
     var host = server.address().address;
@@ -125,4 +144,4 @@ var server = app.listen(conf.listenPort, conf.listenIP, function () {
 server.on ('error', function(e){
     logger.e(`Error happens: ${e.message}`);
     process.exit(1);
-})
+});

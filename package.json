@@ -15,6 +15,7 @@
   "dependencies": {
     "chokidar": "^1.4.3",
     "express": "^4.13.4",
-    "mag": "git+https://github.com/niko-lay/mag.git"
+    "mag": "git+https://github.com/niko-lay/mag.git",
+    "mmdb-reader": "^1.0.1"
   }
 }
